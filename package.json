@@ -1,0 +1,16 @@
+{
+  "name": "reactor-gsheet-add-row",
+  "version": "0.1.0",
+  "description": "Reactor Extension script that adds a row to a Google Sheet spreadsheet each time an appropriate action is created.",
+  "main": "main.js",
+  "dependencies": {
+    "evrythng-extended": "^4.7.2",
+    "google-spreadsheet": "2.0.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/evrythng/reactor-gsheet-add-row"
+  },
+  "author": "EVRYTHNG",
+  "license": "Apache-2.0"
+}
