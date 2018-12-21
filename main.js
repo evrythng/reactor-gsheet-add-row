@@ -1,9 +1,9 @@
 const GoogleSpreadsheet = require('google-spreadsheet');
 
-/**
- * The Google Sheet ID, obtained from the URL.
- */
+/** The Google Sheet ID, obtained from the URL. */
 const SHEET_ID = '';
+/** The worksheet number within the Sheet, starting at 1. */
+const SHEET_NUMBER = 1;
 /**
  * Secret credentials issued from Google API Console. Only these two are required.
  */
@@ -11,10 +11,6 @@ const SECRET_CREDS = {
   client_email: '',
   private_key: '',
 };
-/**
- * The worksheet number within the Sheet, starting at 1.
- */
-const SHEET_NUMBER = 1;
 
 /**
  * Load the sheet using the SHEET_ID
@@ -52,10 +48,9 @@ const addRow = (sheet, customFields) => new Promise((resolve, reject) => {
 
 // @filter(onActionCreated) action.type=_AddRow
 const onActionCreated = (event) => {
-  const { customFields } = event.action;
   loadSheet()
     .then(authenticate)
-    .then(sheet => addRow(sheet, customFields))
+    .then(sheet => addRow(sheet, event.action.customFields))
     .then(res => logger.info(`Row added: ${JSON.stringify(res)}`))
     .catch(logger.error)
     .then(done);
