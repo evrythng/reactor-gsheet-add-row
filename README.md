@@ -32,10 +32,13 @@ Content-Type: application/json
 Authorization: $TRUSTED_APPLICATION_API_KEY
 
 {
-  "Index": "1",
-  "Date": "21/12/18",
-  "Updated": "28397",
-  "Deleted": "23"
+  "type": "_AddRow",
+  "customFields": {
+    "Index": "1",
+    "Date": "21/12/18",
+    "Updated": "28397",
+    "Deleted": "23"
+  }
 }
 ```
 
