@@ -41,7 +41,7 @@ const addRow = (sheet, customFields) => new Promise((resolve, reject) => {
  *
  * @param {function} f - The function to run.
  */
-const runAsync = f => f().catch(e => logger.error(e.message || e.errors[0])).then(done);
+const runAsync = f => f().catch(e => logger.error(e.message || (e.errors && e.errors[0]) || e)).then(done);
 
 // @filter(onActionCreated) action.type=_AddRow
 const onActionCreated = event => runAsync(async () => {
@@ -53,3 +53,7 @@ const onActionCreated = event => runAsync(async () => {
   const row = await addRow(sheet, event.action.customFields);
   logger.info(`Row added: ${JSON.stringify(row)}`);
 });
+
+module.exports = {
+  onActionCreated,
+}
