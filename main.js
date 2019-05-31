@@ -4,19 +4,11 @@ const GoogleSpreadsheet = require('google-spreadsheet');
 const SHEET_ID = '';
 /** The worksheet number within the Sheet, starting at 1. */
 const SHEET_NUMBER = 1;
-/**
- * Secret credentials issued from Google API Console. Only these two are required.
- */
+/** Secret credentials issued from Google API Console. Only these two are required. */
 const SECRET_CREDS = {
   client_email: '',
   private_key: '',
 };
-
-/**
- * Load the sheet using the SHEET_ID
- * @returns {Promise} Promise that resolves to the google-spreadsheet object.
- */
-const loadSheet = () => new Promise(resolve => resolve(new GoogleSpreadsheet(SHEET_ID)));
 
 /**
  * Authenticate the sheet by applying secret credentials.
@@ -24,9 +16,7 @@ const loadSheet = () => new Promise(resolve => resolve(new GoogleSpreadsheet(SHE
  * @param {object} sheet - The google-spreadsheet object.
  * @returns {Promise} Promise that resolves when google-spreadsheet calls back.
  */
-const authenticate = sheet => new Promise((resolve) => {
-  sheet.useServiceAccountAuth(SECRET_CREDS, () => resolve(sheet));
-});
+const authenticate = sheet => new Promise(res => sheet.useServiceAccountAuth(SECRET_CREDS, res));
 
 /**
  * Add a row to the Sheet using the google-spreadsheet library.
@@ -46,12 +36,20 @@ const addRow = (sheet, customFields) => new Promise((resolve, reject) => {
   });
 });
 
+/**
+ * Run an async function and take care of calling done() and catching any errors.
+ *
+ * @param {function} f - The function to run.
+ */
+const runAsync = f => f().catch(e => logger.error(e.message || e.errors[0])).then(done);
+
 // @filter(onActionCreated) action.type=_AddRow
-const onActionCreated = (event) => {
-  loadSheet()
-    .then(authenticate)
-    .then(sheet => addRow(sheet, event.action.customFields))
-    .then(res => logger.info(`Row added: ${JSON.stringify(res)}`))
-    .catch(logger.error)
-    .then(done);
-};
+const onActionCreated = event => runAsync(async () => {
+  logger.info(`Got data: ${JSON.stringify(event.action.customFields)}`);
+
+  const sheet = new GoogleSpreadsheet(SHEET_ID);
+  await authenticate(sheet);
+
+  const row = await addRow(sheet, event.action.customFields);
+  logger.info(`Row added: ${JSON.stringify(row)}`);
+});
